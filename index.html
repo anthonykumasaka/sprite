@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>HTML Canvas Animation</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="./scripts/game.js"></script>
+    <script src="./scripts/player.js"></script>
+  </head>
+
+  <body>
+    <canvas id="canvas" style="border: 2px solid black;"></canvas>
+    <button onClick="moveDown()">Down</button>
+    <button onClick="moveUp()">Up</button>
+    <button onClick="moveLeft()">Left</button>
+    <button onClick="moveRight()">Right</button>
+
+    <button onClick="movePause()">Pause</button>
+
+
+    <script>
+      var canWidth = 650; 
+      var canHeight = 300; 
+
+      // the position where the frame will be drawn 
+      var x = 0; 
+      var y = 0; 
+
+      var left = false; 
+      var right = true; 
+      var down = false; 
+      var up = false; 
+      var pause = false; 
+
+      var trackDown = 0 
+      var trackLeft = 1; 
+      var trackRight = 2; 
+      var trackUp = 3; 
+
+      var srcX; 
+      var srcY; 
+
+      var sheetWidth = 256; 
+      var sheetHeight = 256; 
+
+      var cols = 4;
+      var rows = 4; 
+
+      var width = sheetWidth / cols; 
+      var height = sheetHeight / rows; 
+
+      var currentFrame = 0; 
+
+      var character = new Image(); 
+      character.src = "./images/ash_sprite.png"; 
+
+      var canvas = document.getElementById('canvas'); 
+      canvas.width = canWidth; 
+      canvas.height = canHeight; 
+      var ctx = canvas.getContext('2d'); 
+
+      function moveDown() {
+        down = true; 
+        up = false; 
+        right = false; 
+        left = false; 
+      }
+
+      function moveUp() {
+        up = true; 
+        down = false; 
+        right = false; 
+        left = false; 
+      }
+
+      function moveRight() {
+        right = true; 
+        left = false; 
+      }
+
+      function moveLeft() {
+        left = true; 
+        right = false; 
+      }
+
+      function movePause() {
+        pause = true;
+        right = false; 
+        left = false; 
+        down = false; 
+        up = false;  
+      }
+
+      function updateFrame() {
+        ctx.clearRect(x,y, width, height); 
+
+        currentFrame = ++currentFrame % cols; /// 1 % 4 = 1, 2 % 8 = 2... 8 % 5 = 0
+        srcX = currentFrame * width; 
+        if(left) {
+          x -= 5; 
+          srcY = trackLeft * height; 
+        } else if (right) {
+          x += 5;
+          srcY = trackRight * height; 
+        } else if (up) {
+          y -= 5;
+          srcY = trackUp * height; 
+        } else if (down) {
+          y += 5; 
+          srcY = trackDown * height; 
+        } else if (pause) { 
+          srcY = 0;
+          srcX = 0;  
+        }
+
+        // ctx.clearRect(x,y, width, height); 
+      }
+
+      function drawImage() {
+        updateFrame(); 
+        ctx.drawImage(character, srcX, srcY, width, height, x, y, width, height); 
+
+      }
+
+      setInterval(function(){
+        drawImage(); 
+
+      }, 100); 
+
+
+    </script>
+
+  </body>
+</html>
